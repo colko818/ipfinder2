@@ -3,18 +3,39 @@ import argparse
 import subprocess
 import sys
 
-from flask import Flask
+from sysconfig import get_platform
+
+from flask import Flask, abort
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-@app.route('/ping/<addr>')
-def Ping(addr):
-    return subprocess.Popen([
-        'ping',
-        '-c', '1',
-        '-w', '500',
-        str(addr)], stdout=subprocess.PIPE).communicate()[0]
+tasks = ['ping',]
+
+
+def DoPing(address):
+    cnt = '-n'
+    if get_platform().startswith('win'):
+        cnt = '-n'
+    else:
+        cnt = '-c'
+
+    cmd = ['ping', cnt, '1', '-w', '500', str(address)]
+    print(cmd)
+
+    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+
+
+@app.route('/<addr>/<task>')
+def HandleTask(addr, task):
+    if task not in tasks:
+        abort(400)
+
+    if task == 'ping':
+        ret = DoPing(addr)
+
+
+        return ret
 
 
 def start_worker():
