@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,7 +47,23 @@ namespace Manager.Controllers {
         }
 
         private string AssignWorker(string address, string command) {
-            return "hello world " + address + " " + command ;
+            var workerAddress = "http://127.0.0.1:2112/";
+            var reqAddress = workerAddress + address + "/" + command;
+            var retval = String.Empty;
+
+            HttpClient worker = new HttpClient();
+            try {
+                Console.WriteLine(reqAddress);
+                var res = worker.GetAsync(reqAddress).Result;
+                res.EnsureSuccessStatusCode();
+
+                retval = res.Content.ReadAsStringAsync().Result;
+            } catch (Exception e) {
+                retval = "Error: " + e.HResult.ToString("X") + "\nMessage: " + e.Message;
+            }
+
+            worker.Dispose();
+            return retval;
         }
 
         private bool AddressIsValid(string addr) {
