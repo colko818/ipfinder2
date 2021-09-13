@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: manager-node-deployment
+  labels:
+    app: manager-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: manager-node
+  template:
+    metadata:
+      labels:
+        app: manager-node
+    spec:
+      containers:
+      - name: manager-node
+        image: gaella818/manager-node:1.0
+        ports:
+        - containerPort: 5001
+        env:
+        - name: IP_WORKER_ADDRESS
+          value: worker-node-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: manager-node-service
+spec:
+  selector:
+    app: manager-node
+  type: LoadBalancer  
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
+      nodePort: 30000

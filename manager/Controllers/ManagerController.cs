@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -54,13 +55,12 @@ namespace Manager.Controllers {
         }
 
         private string AssignWorker(string address, string command) {
-            var workerAddress = "http://172.17.0.2:2112/";
+            var workerAddress = Environment.GetEnvironmentVariable("IP_WORKER_ADDRESS");
             var reqAddress = workerAddress + address + "/" + command;
             var retval = String.Empty;
 
             HttpClient worker = new HttpClient();
             try {
-                Console.WriteLine(reqAddress);
                 var res = worker.GetAsync(reqAddress).Result;
                 res.EnsureSuccessStatusCode();
 
