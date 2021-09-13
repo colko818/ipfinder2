@@ -13,6 +13,10 @@ namespace Manager.Controllers {
     [ApiController]
     [Route("api/[controller]")]
     public class ManagerController : ControllerBase {
+        public ManagerController() {
+            _defaultCommands = new List<string>() { "ping", };
+        }
+
         [HttpPost]
         public ActionResult Post(IpFinderRequest request) {
             var retval = String.Empty;
@@ -26,7 +30,10 @@ namespace Manager.Controllers {
 
             var tasks = new List<Task<string>>();
 
-            foreach (string cmd in request.Commands) {
+            var commands =
+                request.Commands.Count > 0 ? request.Commands : _defaultCommands;
+
+            foreach (string cmd in commands) {
                 tasks.Add(Task<string>.Factory.StartNew( (data) => {
                     var taskData = data as TaskData;
                     return AssignWorker(taskData.addr, taskData.cmd);
@@ -47,7 +54,7 @@ namespace Manager.Controllers {
         }
 
         private string AssignWorker(string address, string command) {
-            var workerAddress = "http://127.0.0.1:2112/";
+            var workerAddress = "http://172.17.0.2:2112/";
             var reqAddress = workerAddress + address + "/" + command;
             var retval = String.Empty;
 
@@ -69,5 +76,7 @@ namespace Manager.Controllers {
         private bool AddressIsValid(string addr) {
             return true;
         }
+
+        private static List<string> _defaultCommands;
     }
 }
