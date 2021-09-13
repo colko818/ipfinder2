@@ -20,7 +20,8 @@ namespace Manager
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                        .UseUrls(urls: "https://*:5001;http://*:5000");
                 });
     }
 }
