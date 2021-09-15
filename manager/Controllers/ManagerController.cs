@@ -15,11 +15,12 @@ namespace Manager.Controllers {
     [Route("api/[controller]")]
     public class ManagerController : ControllerBase {
         public ManagerController() {
-            _defaultCommands = new List<string>() { "ping", };
+            _defaultCommands = new List<string>() { "ping", "dns" };
         }
 
         [HttpPost]
         public ActionResult Post(IpFinderRequest request) {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             var retval = String.Empty;
 
             // Validate IP/domain
@@ -44,10 +45,16 @@ namespace Manager.Controllers {
             }
             Task.WaitAll(tasks.ToArray());
 
+            watch.Stop();
+
+            Double elapsed_ms = watch.ElapsedMilliseconds;
+            Double elapsed_s = elapsed_ms / 1000.0;
+            retval = String.Format("Results in: {0}s\n", elapsed_s);
+
             foreach (var task in tasks) {
                 var ret = task.Result;
                 if (ret != null) {
-                    retval = retval + "\n"+ ret;
+                    retval = retval + "\n\n" + ret;
                 }
             }
 
