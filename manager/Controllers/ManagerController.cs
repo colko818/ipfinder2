@@ -18,6 +18,27 @@ namespace Manager.Controllers {
             _defaultCommands = new List<string>() { "ping", "dns" };
         }
 
+        /// <summary>
+        /// Send requests to worker(s)
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/manager
+        ///     {
+        ///         "address": "8.8.8.8",
+        ///         "commands": [ "ping", "dns" ]
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="request">
+        ///     Address: IP address or domain
+        ///     Commands: A List of worker commands
+        ///         default: [ping, dns]
+        ///         supported commands:
+        ///             ping
+        ///             dns
+        /// </param>
         [HttpPost]
         public ActionResult Post(IpFinderRequest request) {
             var watch = System.Diagnostics.Stopwatch.StartNew();

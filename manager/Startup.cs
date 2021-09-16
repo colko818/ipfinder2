@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,9 +27,26 @@ namespace Manager
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "manager", Version = "v1" });
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo {
+                    Title = "IPFinder2 Manager",
+                    Version = "v1",
+                    Description = "A simple IP/domain describer",
+                    Contact = new OpenApiContact {
+                        Name = "Gaella Collins-Sibley",
+                        Email = "gaella@collins-sibley.com",
+                        Url = new Uri("https://gaella.collins-sibley.com/"),
+                    },
+                    License = new OpenApiLicense {
+                        Name = "Use under MIT",
+                        Url = new Uri("https://github.com/colko818/ipfinder2/blob/main/LICENSE"),
+                    }
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -42,8 +58,15 @@ namespace Manager
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "manager v1"));
+            app.UseSwagger(c => {
+                c.SerializeAsV2 = true;
+            });
+
+            app.UseSwaggerUI(
+                c => {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "manager v1");
+                    c.RoutePrefix = String.Empty;
+                });
 
             app.UseHttpsRedirection();
 
