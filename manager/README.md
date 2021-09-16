@@ -1,3 +1,4 @@
 # Manager
-Exposes API to the world
-async send task requests to worker nodes
+
+A dotnet webapi application in C# which serves as the entry point to a cluster
+of ipfinder worker nodes.
