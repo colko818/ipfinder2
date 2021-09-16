@@ -15,7 +15,7 @@ namespace Manager.Controllers {
     [Route("api/[controller]")]
     public class ManagerController : ControllerBase {
         public ManagerController() {
-            _defaultCommands = new List<string>() { "ping", "dns" };
+            _defaultCommands = new List<string>() { "ping", "dns", "rdap", "geoip" };
         }
 
         /// <summary>
@@ -27,18 +27,10 @@ namespace Manager.Controllers {
         ///     POST /api/manager
         ///     {
         ///         "address": "8.8.8.8",
-        ///         "commands": [ "ping", "dns" ]
+        ///         "commands": [ "ping", "dns", "rdap", "geoip" ]
         ///     }
         ///
         /// </remarks>
-        /// <param name="request">
-        ///     Address: IP address or domain
-        ///     Commands: A List of worker commands
-        ///         default: [ping, dns]
-        ///         supported commands:
-        ///             ping
-        ///             dns
-        /// </param>
         [HttpPost]
         public ActionResult Post(IpFinderRequest request) {
             var watch = System.Diagnostics.Stopwatch.StartNew();
