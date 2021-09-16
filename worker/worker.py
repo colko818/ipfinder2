@@ -5,9 +5,14 @@ import sys
 
 from sysconfig import get_platform
 
+from werkzeug.sansio.response import Response
+
 from dns import reversename, resolver
 from flask import Flask, abort
 from ping3 import ping
+
+import requests
+import json
 
 import whoisit
 
@@ -72,7 +77,12 @@ def DoRDAP(address):
 
 
 def DoGeoIP(address):
-    return ""
+    request_url = "https://geolocation-db.com/jsonp/" + address
+    resp = requests.get(request_url)
+    result = resp.content.decode()
+    result = result.split("(")[1].strip(")")
+    result  = json.loads(result)
+    return result
 
 
 @app.route('/<addr>/<task>')
