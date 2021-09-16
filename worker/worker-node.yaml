@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: worker-node
-        image: gaella818/worker-node:1.1
+        image: gaella818/worker-node:1.2
         ports:
         - containerPort: 2112
 ---

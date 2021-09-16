@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: manager-node
-        image: gaella818/manager-node:1.0
+        image: gaella818/manager-node:1.1
         ports:
         - containerPort: 5001
         env:
