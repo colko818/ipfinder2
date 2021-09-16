@@ -9,10 +9,21 @@ from dns import reversename, resolver
 from flask import Flask, abort
 from ping3 import ping
 
+import whoisit
+
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-tasks = ['ping', "geoip", "dns"]
+tasks = ['ping', "geoip", "dns", "rdap"]
+
+
+def DoPing(address):
+    delay_s = ping(address, timeout=2)
+
+    if delay_s is not None:
+        return "Ping:\nHost is alive! {0:.3g}s delay".format(delay_s)
+
+    return "Ping:\nHost is dead/timedout :("
 
 
 def DoDNS(address):
@@ -48,30 +59,36 @@ def DoDNS(address):
     return retval
 
 
+def DoRDAP(address):
+    if not whoisit.bootstrap():
+        return "RDAP init failed"
+
+    parts = address.split('.')
+
+    if len(parts) == 4:
+        return str(whoisit.ip(address))
+
+    return str(whoisit.domain(address))
+
+
 def DoGeoIP(address):
     return ""
 
 
-def DoPing(address):
-    delay_s = ping(address, timeout=2)
-
-    if delay_s is not None:
-        return "Ping:\nHost is alive! {0:.3g}s delay".format(delay_s)
-
-    return "Ping:\nHost is dead/timedout :("
-
-
 @app.route('/<addr>/<task>')
 def HandleTask(addr, task):
+    task = task.lower()
     if task not in tasks:
         abort(400)
 
     if task == 'ping':
         return DoPing(addr)
-    if task == 'geoip':
-        return DoGeoIP(addr)
     if task == 'dns':
         return DoDNS(addr)
+    if task == 'rdap':
+        return DoRDAP(addr)
+    if task == 'geoip':
+        return DoGeoIP(addr)
 
 
 def start_worker():
