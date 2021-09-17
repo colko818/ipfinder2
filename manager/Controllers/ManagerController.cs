@@ -1,9 +1,6 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,13 +15,14 @@ namespace Manager.Controllers {
             _defaultCommands = new List<string>() { "ping", "dns", "rdap", "geoip" };
         }
 
+        // TODO: Jsonify response
         /// <summary>
         /// Send requests to worker(s)
         /// </summary>
         /// <remarks>
         /// Sample request:
         ///
-        ///     POST /api/manager
+        ///     POST /api/Manager/request
         ///     {
         ///         "address": "8.8.8.8",
         ///         "commands": [ "ping", "dns", "rdap", "geoip" ]
@@ -32,6 +30,7 @@ namespace Manager.Controllers {
         ///
         /// </remarks>
         [HttpPost]
+        [Route("request")]
         public ActionResult Post(IpFinderRequest request) {
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var retval = String.Empty;
@@ -75,8 +74,10 @@ namespace Manager.Controllers {
         }
 
         private string AssignWorker(string address, string command) {
-            var workerHost = Environment.GetEnvironmentVariable("WORKER_NODE_SERVICE_SERVICE_HOST");
-            var workerPort = Environment.GetEnvironmentVariable("WORKER_NODE_SERVICE_SERVICE_PORT");
+            var workerHost = Environment.GetEnvironmentVariable(
+                "WORKER_NODE_SERVICE_SERVICE_HOST");
+            var workerPort = Environment.GetEnvironmentVariable(
+                "WORKER_NODE_SERVICE_SERVICE_PORT");
             var reqAddress = String.Format(
                 "http://{0}:{1}/{2}/{3}",
                 workerHost,
@@ -93,13 +94,18 @@ namespace Manager.Controllers {
 
                 retval = res.Content.ReadAsStringAsync().Result;
             } catch (Exception e) {
-                retval = "Error: " + e.HResult.ToString("X") + "\nMessage: " + e.Message;
+                retval = String.Format(
+                    "Error: {0} \nMessage: {1}",
+                    e.HResult.ToString("X"),
+                    e.Message);
             }
 
             worker.Dispose();
             return retval;
         }
 
+        // TODO: Add validator that returns true only if `addr` is a well
+        // formated IP address or a domain name.
         private bool AddressIsValid(string addr) {
             return true;
         }
