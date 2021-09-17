@@ -14,4 +14,5 @@ COPY --from=build-env /app/out/ .
 
 RUN dotnet dev-certs https
 RUN dotnet dev-certs https --trust
+EXPOSE 5000 5001
 ENTRYPOINT ["dotnet", "manager.dll"]

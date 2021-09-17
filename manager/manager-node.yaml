@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: manager-node
-        image: gaella818/manager-node:0.1
+        image: gaella818/manager-node:0.1.1
         resources:
           requests:
             memory: "64Mi"
