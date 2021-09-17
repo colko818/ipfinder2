@@ -75,8 +75,15 @@ namespace Manager.Controllers {
         }
 
         private string AssignWorker(string address, string command) {
-            var workerAddress = Environment.GetEnvironmentVariable("IP_WORKER_ADDRESS");
-            var reqAddress = workerAddress + address + "/" + command;
+            var workerHost = Environment.GetEnvironmentVariable("WORKER_NODE_SERVICE_SERVICE_HOST");
+            var workerPort = Environment.GetEnvironmentVariable("WORKER_NODE_SERVICE_SERVICE_PORT");
+            var reqAddress = String.Format(
+                "http://{0}:{1}/{2}/{3}",
+                workerHost,
+                workerPort,
+                address,
+                command);
+
             var retval = String.Empty;
 
             HttpClient worker = new HttpClient();

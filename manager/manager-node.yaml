@@ -19,9 +19,6 @@ spec:
         image: gaella818/manager-node:1.1
         ports:
         - containerPort: 5001
-        env:
-        - name: IP_WORKER_ADDRESS
-          value: worker-node-service
 ---
 apiVersion: v1
 kind: Service
