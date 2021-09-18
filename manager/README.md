@@ -22,22 +22,24 @@ POST /api/Manager/request
 
 ```
 {
-  "address": "8.8.8.8",
+  "address": "collins-sibley.com",
   "commands": [
-    "ping", "pong"
+    "ping", "png", "dns"
   ]
 }
 ```
 
 ```
-Results in: 0.102s
+Results in: 0.439s
 
 
-{"Alive":true,"Delay":0.07811403274536133,"Task":"Ping"}
+{"Alive":true,"Delay":0.22495818138122559,"Task":"Ping"}
 
 
-Error: 80131500
+Error: 80131500 
 Message: Response status code does not indicate success: 400 (BAD REQUEST).
+
+{"A_Records":["199.34.228.159"],"CNAME_Records":null,"MX_Records":["10 mx1.privateemail.com.","10 mx2.privateemail.com."],"Task":"DNS"}
 ```
 
 ## Docker
