@@ -14,6 +14,34 @@ A simple python worker to be replicated on k8 cluster.
 
 [Documentation](worker/README.md)
 
+## Run locally
+
+### Requirements
+
+* Docker
+* Internet connection
+
+```
+docker pull gaella818/worker-node:0.1
+docker pull gaella818/manager-node:0.1.1
+
+docker kill worker_node manager_node
+docker rm worker_node manager_node
+
+docker run -d -p 2112:2112 --name worker_node gaella818/worker-node:0.1
+docker run -d -p 5000-5001:5000-5001 --name manager_node gaella818/manager-node:0.2
+
+docker network create ipfinder
+docker network connect ipfinder worker_node
+docker network connect ipfinder manager_node
+```
+
+### Windows
+1) Run: win: `run_local.bat` linux: `bash run_local.sh`
+1) Open [localhost:5001/](https://localhost:5001/)
+1) `Warning: Potential Security Risk Ahead` click `Advanced`
+1) Click `Accept the Risk and Continue`
+
 ## Deployment
 
 ipfinder2 is deployed on AWS and is accessable [here.]()
